@@ -1,0 +1,43 @@
+#!/bin/bash
+# Helper code stolen from https://github.com/kvz/bash3boilerplate
+# Exit on error. Append "|| true" if you expect an error.
+set -o errexit
+# Exit on error inside any functions or subshells.
+set -o errtrace
+# Do not allow use of undefined vars. Use ${VAR:-} to use an undefined VAR
+set -o nounset
+# Catch the error in case mysqldump fails (but gzip succeeds) in `mysqldump |gzip`
+set -o pipefail
+# Turn on traces, useful while debugging but commented out by default
+# set -o xtrace
+
+if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
+  __i_am_main_script="0" # false
+
+  if [[ "${__usage+x}" ]]; then
+    if [[ "${BASH_SOURCE[1]}" = "${0}" ]]; then
+      __i_am_main_script="1" # true
+    fi
+
+    __b3bp_external_usage="true"
+    __b3bp_tmp_source_idx=1
+  fi
+else
+  __i_am_main_script="1" # true
+  [[ "${__usage+x}" ]] && unset -v __usage
+  [[ "${__helptext+x}" ]] && unset -v __helptext
+fi
+
+# Set magic variables for current file, directory, os, etc.
+__dir="$(cd "$(dirname "${BASH_SOURCE[${__b3bp_tmp_source_idx:-0}]}")" && pwd)"
+__file="${__dir}/$(basename "${BASH_SOURCE[${__b3bp_tmp_source_idx:-0}]}")"
+__base="$(basename "${__file}" .sh)"
+# shellcheck disable=SC2034,SC2015
+__invocation="$(printf %q "${__file}")$( (($#)) && printf ' %q' "$@" || true)"
+
+
+# Uncomment this and define comma-separated paths which should always be present
+# in the container
+#export SINGULARITY_BINDPATH=/scratch,/project
+
+singularity exec --pwd $(pwd -P) ${__dir}/container.simg ${__base} $@
