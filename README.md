@@ -34,6 +34,8 @@ Singularity by default only exposes the following paths to processes executing i
 the container: `$HOME`, `/tmp`, `/proc`, `/sys`, `/dev`, and `$PWD`. Your system
 administrator (if you have one) may have configured additional paths.
 
+See https://sylabs.io/guides/3.0/user-guide/bind_paths_and_mounts.html for more details.
+
 Attempting to acesss files and paths outside the defaults using wrapper executables may
 result in errors.
 
