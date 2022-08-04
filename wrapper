@@ -43,6 +43,7 @@ __invocation="$(printf %q "${__file}")$( (($#)) && printf ' %q' "$@" || true)"
 
 # Uncomment this and define comma-separated paths which should always be present
 # in the container
-#export SINGULARITY_BINDPATH=/scratch,/project
+#export SINGULARITY_BINDPATH=/scratch,/project${SINGULARITY_BINDPATH:+,$SINGULARITY_BINDPATH}
+
 
 singularity exec --pwd $(pwd -P) ${__dir}/container.simg ${__base} $@
